@@ -7,14 +7,40 @@
 
 ## 安装与首次使用
 
-PixelFit 0.4.0 提供 Windows x64 安装版与免安装版。可执行文件约 508 MiB，未放入 Git；
-CERE-26 的 Multica 附件保留了两套 45 MiB 分卷、`SHA256SUMS.txt` 与
-`release/cere26/REASSEMBLE.ps1`。下载同一目标的全部 12 个分卷后，在该目录运行脚本即可
-重组并校验。安装包未签名，Windows SmartScreen 可能显示警告。
+PixelFit 0.4.0 提供 Windows x64 安装版与免安装版，统一从
+[GitHub Release v0.4.0](https://github.com/llss665/steam/releases/tag/v0.4.0) 下载：
+
+- [安装版 `PixelFit-Setup-0.4.0-x64.exe`](https://github.com/llss665/steam/releases/download/v0.4.0/PixelFit-Setup-0.4.0-x64.exe)：下载后双击，按向导选择安装目录。
+- [免安装版 `PixelFit-Portable-0.4.0-x64.exe`](https://github.com/llss665/steam/releases/download/v0.4.0/PixelFit-Portable-0.4.0-x64.exe)：放到固定目录后直接双击运行，适合不想安装的情况。
+- [`SHA256SUMS.txt`](https://github.com/llss665/steam/releases/download/v0.4.0/SHA256SUMS.txt)：可用 `Get-FileHash .\PixelFit-*.exe -Algorithm SHA256` 核对下载完整性。
+
+这两个程序目前都**没有代码签名**。从上面的 Release 链接下载并核对 SHA-256 后，若
+Windows SmartScreen 显示“Windows 已保护你的电脑”，可点“更多信息”，确认发布者显示为
+“未知发布者”且文件名正确，再点“仍要运行”。
 
 首次启动选择“从照片导入”或“从商品链接导入”，也可以先查看 8 件现代日常示例。
 **不配置任何云端 Key 时应用仍可完整启动、导入、整理衣橱，并使用本地分层预览；不会上传图片，
 也不会产生 AI 试穿费用。**
+
+### 从源码自己构建
+
+如果不想下载数百 MiB 的成品，请准备 Windows x64、Git、Node.js 20+ 与 Python 3.11，
+然后在 PowerShell 中执行完整构建：
+
+```powershell
+git clone https://github.com/llss665/steam.git
+Set-Location steam
+npm ci
+.\scripts\prepare-windows-pipeline.ps1
+npm test
+npm run typecheck
+npm run dist
+Get-ChildItem .\dist\PixelFit-*.exe
+```
+
+准备脚本会下载锁定的本地抠图模型、安装隔离的 Python 依赖并构建本地运行时；不会调用
+AI 试穿接口。最终安装版和免安装版分别位于
+`dist/PixelFit-Setup-0.4.0-x64.exe` 与 `dist/PixelFit-Portable-0.4.0-x64.exe`。
 
 ## AI 高清试穿（可选）
 
